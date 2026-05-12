@@ -1,15 +1,23 @@
-#ifndef LOG_H
-#define LOG_H
+#pragma once
 
-#include "game_state.h"
-#include "story.h"
+#include "bn_string.h"
 #include "bn_sprite_text_generator.h"
 #include "bn_sprite_ptr.h"
 #include "bn_vector.h"
 
-void render_log(const SaveData& state, const Node nodes[], bn::sprite_text_generator& tg,
-    bn::vector<bn::sprite_ptr, 128>& sprites, int log_scroll);
+constexpr int MAX_LOG = 128;
 
-void update_log(bool& in_log, bool& in_title, int& log_scroll, const SaveData& state);
+struct LogEntry
+{
+    bn::string<32> speaker;
+    bn::string<64> text;
+};
 
-#endif // LOG_H
+void log_message(const char* speaker, const char* text);
+void log_choice(const char* choice_text);
+
+void render_log(bn::sprite_text_generator& tg,
+    bn::vector<bn::sprite_ptr, 128>& sprites,
+    int scroll);
+
+void update_log(bool& in_log, bool& in_title, int& scroll);

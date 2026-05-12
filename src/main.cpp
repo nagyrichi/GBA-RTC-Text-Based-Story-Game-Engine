@@ -2,11 +2,12 @@
 #include "bn_keypad.h"
 #include "bn_sprite_text_generator.h"
 #include "bn_sprite_ptr.h"
-#include "bn_time.h"
+
 #include "game_state.h"
 #include "ui_text.h"
 #include "log.h"
 #include "story.h"
+
 #include "../external/butano/common/include/common_fixed_8x8_sprite_font.h"
 
 namespace
@@ -33,12 +34,14 @@ int main()
 
     int log_scroll = 0;
 
+    const Node* node = &nodes[state.current_node];
+
     while(true)
     {
         sprites.clear();
         tg.set_left_alignment();
 
-        const Node& node = nodes[state.current_node];
+        node = &nodes[state.current_node];
 
         // ---------------- TITLE ----------------
         if(in_title)
@@ -67,8 +70,8 @@ int main()
         // ---------------- LOG ----------------
         else if(in_log)
         {
-            render_log(state, nodes, tg, sprites, log_scroll);
-            update_log(in_log, in_title, log_scroll, state);
+            render_log(tg, sprites, log_scroll);
+            update_log(in_log, in_title, log_scroll);
         }
 
         // ---------------- GAME ----------------
@@ -84,19 +87,32 @@ int main()
                     visible++;
 
                     int len = 0;
-                    for(int i = 0; i < node.line_count; ++i)
+                    for(int i = 0; i < node->line_count; ++i)
                     {
-                        len += strlen(node.lines[i]);
+                        len += strlen(node->lines[i]);
                     }
 
-                    if(visible >= len + node.line_count)
+                    if(visible >= len + node->line_count)
                     {
                         finished = true;
+
+                        // ✔ FULL MESSAGE LOG (minden sor)
+                        bn::string<128> full;
+
+                        for(int i = 0; i < node->line_count; ++i)
+                        {
+                            full += node->lines[i];
+
+                            if(i < node->line_count - 1)
+                                full += " ";
+                        }
+
+                        log_message(node->speaker, full.c_str());
                     }
                 }
             }
 
-            render_node(node, visible, finished, tg, sprites);
+            render_node(*node, visible, finished, tg, sprites);
 
             if(bn::keypad::select_pressed())
             {
@@ -110,10 +126,14 @@ int main()
                 in_log = false;
             }
 
-            if(bn::keypad::a_pressed() && finished && !node.ending)
+            // ---------------- CHOICE A ----------------
+            if(bn::keypad::a_pressed() && finished && !node->ending)
             {
                 state.history[state.history_count++] = state.current_node;
-                state.current_node = node.next_a;
+
+                log_choice(node->option_a);
+
+                state.current_node = node->next_a;
 
                 visible = 0;
                 finished = false;
@@ -121,10 +141,14 @@ int main()
                 save_game(state);
             }
 
-            if(bn::keypad::b_pressed() && finished && !node.ending)
+            // ---------------- CHOICE B ----------------
+            if(bn::keypad::b_pressed() && finished && !node->ending)
             {
                 state.history[state.history_count++] = state.current_node;
-                state.current_node = node.next_b;
+
+                log_choice(node->option_b);
+
+                state.current_node = node->next_b;
 
                 visible = 0;
                 finished = false;
