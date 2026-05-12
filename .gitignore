@@ -1,0 +1,17 @@
+build/
+*.gba
+*.elf
+*.sav
+*.o
+*.d
+
+# Butano engine - automatikusan letöltve
+external/butano/
+
+# Egyéb
+.DS_Store
+.vscode/
+*.swp
+*.swo
+*~
+
