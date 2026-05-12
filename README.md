@@ -1,6 +1,6 @@
 # GBA Lifeline – Text Adventure
 
-> A Game Boy Advance text adventure inspired by [Lifeline](https://en.wikipedia.org/wiki/Lifeline_(video_game)), built with the [Butano](https://github.com/vittorioromeo/butano) engine.  
+> A Game Boy Advance text adventure inspired by [Lifeline](https://www.3minute.games/) (3 Minute Games), built with the [Butano](https://github.com/GValiente/butano) engine.  
 > Supports real-time RTC-based events, narrative progression, and a quick-play mode for testing.
 
 ---
@@ -131,7 +131,7 @@ GBA-RTC-Text-Based-Story-Game-Engine/
 
 | Resource | Link |
 |----------|------|
-| Butano engine | https://github.com/vittorioromeo/butano |
+| Butano engine | https://github.com/GValiente/butano |
 | devkitPro | https://devkitpro.org/ |
 | GBA development | https://www.gbadev.org/ |
 | mGBA emulator | https://mgba.io/ |
