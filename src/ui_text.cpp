@@ -1,5 +1,6 @@
 #include "ui_text.h"
 #include "game_state.h"
+#include "utils.h"
 
 #include "bn_format.h"
 #include "bn_keypad.h"
