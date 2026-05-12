@@ -2,11 +2,14 @@
 #include "bn_keypad.h"
 #include "bn_sprite_text_generator.h"
 #include "bn_sprite_ptr.h"
+#include "bn_date.h"
+#include "bn_time.h"
 
 #include "game_state.h"
 #include "ui_text.h"
 #include "log.h"
 #include "story.h"
+
 
 #include "../external/butano/common/include/common_fixed_8x8_sprite_font.h"
 
@@ -14,6 +17,36 @@ namespace
 {
     constexpr int MAX_SPRITES = 128;
     int global_frame = 0;
+}
+
+bn::string<8> make_time()
+{
+    bn::optional<bn::time> t = bn::time::current();
+
+    if(!t)
+    {
+        return "00:00";
+    }
+
+    bn::string<8> out;
+
+    if(t->hour() < 10)
+    {
+        out += "0";
+    }
+
+    out += bn::to_string<2>(t->hour());
+
+    out += ":";
+
+    if(t->minute() < 10)
+    {
+        out += "0";
+    }
+
+    out += bn::to_string<2>(t->minute());
+
+    return out;
 }
 
 int main()
@@ -65,6 +98,12 @@ int main()
                 visible = 0;
                 finished = false;
             }
+
+            if(bn::keypad::l_held() && bn::keypad::r_pressed())
+            {
+                state.real_time_mode = !state.real_time_mode;
+                save_game(state);
+            }
         }
 
         // ---------------- LOG ----------------
@@ -77,6 +116,7 @@ int main()
         // ---------------- GAME ----------------
         else
         {
+            // ---------------- TEXT STREAM ----------------
             if(!state.waiting && !finished)
             {
                 tick++;
@@ -96,30 +136,33 @@ int main()
                     {
                         finished = true;
 
-                        // ✔ FULL MESSAGE LOG (minden sor)
-                        bn::string<128> full;
+                        bn::vector<bn::string<48>, MAX_LOG_LINES> lines;
 
                         for(int i = 0; i < node->line_count; ++i)
                         {
-                            full += node->lines[i];
-
-                            if(i < node->line_count - 1)
-                                full += " ";
+                            lines.push_back(node->lines[i]);
                         }
 
-                        log_message(node->speaker, full.c_str());
+                        log_message(
+                            node->speaker,
+                            lines,
+                            make_time().c_str(),
+                            false
+                        );
                     }
                 }
             }
 
             render_node(*node, visible, finished, tg, sprites);
 
+            // ---------------- OPEN LOG ----------------
             if(bn::keypad::select_pressed())
             {
                 in_log = true;
                 log_scroll = 0;
             }
 
+            // ---------------- BACK TO TITLE ----------------
             if(bn::keypad::start_pressed())
             {
                 in_title = true;
@@ -131,7 +174,10 @@ int main()
             {
                 state.history[state.history_count++] = state.current_node;
 
-                log_choice(node->option_a);
+                log_choice(
+                    node->option_a,
+                    make_time().c_str()
+                );
 
                 state.current_node = node->next_a;
 
@@ -146,7 +192,10 @@ int main()
             {
                 state.history[state.history_count++] = state.current_node;
 
-                log_choice(node->option_b);
+                log_choice(
+                    node->option_b,
+                    make_time().c_str()
+                );
 
                 state.current_node = node->next_b;
 

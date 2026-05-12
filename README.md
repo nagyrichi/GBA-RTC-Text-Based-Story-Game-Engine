@@ -142,3 +142,16 @@ GBA-RTC-Text-Based-Story-Game-Engine/
 
 The Butano engine license applies to all engine code.  
 See [`external/butano/LICENSE`](external/butano/LICENSE) for details.
+
+## 📄 TODOs / Roadmap
+
+- **Improve in-game LOG feature:**
+  - timestamp
+  - left right allignment for different participators
+- **use RTC:** 
+  - in RTC mode wait real time for answers
+- **proper save to file:**
+  - not sure if it works now
+- **time spent in game:**
+  - new feature to note game time and reveal it on UI
+
