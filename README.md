@@ -152,7 +152,3 @@ This project uses Butano and follows the license included in `LICENSE`.
 ---
 
 If you need help, check the [Butano GitHub Issues](https://github.com/vittorioromeo/Batterytech-Cartridge/issues).
-
-
-
-magick eredeti.png -resize 256x256! -alpha off -colors 256 -compress none BMP3:birthday.bmp
